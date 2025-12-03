@@ -28,9 +28,9 @@ export function CityCard({ city, onClick }: CityCardProps) {
           </div>
           <div
             className="px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg"
-            style={{ backgroundColor: getAQIColor(city.aqi) }}
+            style={{ backgroundColor: getAQIColor(city.aqi ?? -1) }}
           >
-            {getPollutionStatus(city.aqi)}
+            {getPollutionStatus(city.aqi ?? -1)}
           </div>
         </div>
       </CardHeader>
@@ -72,7 +72,7 @@ export function CityCard({ city, onClick }: CityCardProps) {
               Energy
             </div>
             <p className="text-lg font-semibold text-foreground mt-2">
-              {(city.energyConsumption / 1000)} MWh
+              {(city.energyConsumption ?? 0 / 1000)} MWh
             </p>
           </div>
           <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
@@ -81,7 +81,7 @@ export function CityCard({ city, onClick }: CityCardProps) {
               Transport
             </div>
             <p className="text-lg font-semibold text-foreground mt-2">
-              {(city.transportActivity / 1000)}K vehicles
+              {(city.transportActivity ?? 0 / 1000)}K vehicles
             </p>
           </div>
         </div>

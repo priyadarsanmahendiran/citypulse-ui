@@ -8,8 +8,8 @@ export interface CityData {
   windSpeed?: number
   energyConsumption?: number
   transportActivity?: number
-  latitude?: number
-  longitude?: number
+  latitude: number
+  longitude: number
   timestamp?: Date
 }
 
