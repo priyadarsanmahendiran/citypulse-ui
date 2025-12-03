@@ -25,8 +25,24 @@ export default function DashboardPage() {
     const fetchCities = async () => {
       try {
         setLoading(true)
-        const data = await api.getCities()
-        setCities(data)
+        const data = await api.getCities();
+        let citiesSummary: CityData[] = [];
+
+        for (const city of data) {
+          const summaryData = await api.getCityById(city.name);
+
+          const summary: CityData = {
+            id: city.name,
+            name: city.name,
+            aqi: summaryData.aqi,
+            latitude: city.latitude,
+            longitude: city.longitude
+          };
+
+          citiesSummary.push(summary);
+        }
+
+        setCities(citiesSummary)
         setError(null)
       } catch (err) {
         setError("Failed to load cities data")
