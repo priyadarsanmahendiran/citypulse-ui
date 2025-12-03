@@ -1,103 +1,155 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useState, useEffect } from "react"
+import { api } from "@/lib/api"
+import type { FilterState, CityData } from "@/lib/types"
+import { FilterPanel } from "@/components/filter-panel"
+import { CityCard } from "@/components/city-card"
+import { ChartsView } from "@/components/charts-view"
+import { MapView } from "@/components/map-view"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { LayoutGrid, TrendingUp, Map, Cloud } from "lucide-react"
+
+export default function DashboardPage() {
+  const [activeTab, setActiveTab] = useState("dashboard")
+  const [filters, setFilters] = useState<FilterState>({
+    selectedCity: null,
+    selectedMetric: "aqi",
+    timeframe: "24h",
+  })
+  const [cities, setCities] = useState<CityData[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        setLoading(true)
+        const data = await api.getCities()
+        setCities(data)
+        setError(null)
+      } catch (err) {
+        setError("Failed to load cities data")
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCities()
+  }, [])
+
+  const displayedCities = filters.selectedCity ? cities.filter((c) => c.id === filters.selectedCity) : cities
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-slate-900 border-b border-border backdrop-blur-sm shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-lg">
+                <Cloud className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white">CityPulse</h1>
+                <p className="text-white/80 mt-1">Real-time monitoring across multiple cities</p>
+              </div>
+            </div>
+            <div className="text-sm text-white/70 bg-white/10 px-4 py-2 rounded-lg backdrop-blur">
+              Last updated: {new Date().toLocaleTimeString()}
+            </div>
+          </div>
+        </div>
+      </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <FilterPanel filters={filters} onFiltersChange={setFilters} cities={cities} />
+          </div>
+
+          {/* Main Content Area */}
+          <div className="lg:col-span-3">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-3 mb-6 bg-slate-100">
+                <TabsTrigger
+                  value="dashboard"
+                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                  <span className="hidden sm:inline">Dashboard</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="charts"
+                  className="flex items-center gap-2 data-[state=active]:bg-secondary data-[state=active]:text-white"
+                >
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="hidden sm:inline">Charts</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="map"
+                  className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-white"
+                >
+                  <Map className="w-4 h-4" />
+                  <span className="hidden sm:inline">Map</span>
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Dashboard Tab */}
+              <TabsContent value="dashboard" className="space-y-6 mt-0">
+                <div>
+                  <h2 className="text-2xl font-bold mb-4 text-foreground">
+                    {filters.selectedCity ? "City Status" : "All Cities"}
+                  </h2>
+                  {loading && (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">Loading cities...</p>
+                    </div>
+                  )}
+                  {error && (
+                    <div className="text-center py-8">
+                      <p className="text-red-500">{error}</p>
+                    </div>
+                  )}
+                  {!loading && !error && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {displayedCities.map((city) => (
+                        <CityCard
+                          key={city.name}
+                          city={city}
+                          onClick={() => {
+                            setFilters({ ...filters, selectedCity: city.name })
+                            setActiveTab("charts")
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+
+              {/* Charts Tab */}
+              <TabsContent value="charts" className="mt-0">
+                <ChartsView selectedCity={filters.selectedCity} cities={cities} />
+              </TabsContent>
+
+              {/* Map Tab */}
+              <TabsContent value="map" className="mt-0">
+                <MapView
+                  cities={cities}
+                  onCitySelect={(cityId) => {
+                    setFilters({ ...filters, selectedCity: cityId })
+                  }}
+                  selectedCity={filters.selectedCity}
+                />
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
-  );
+  )
 }
