@@ -35,6 +35,9 @@ export default function DashboardPage() {
             id: city.name,
             name: city.name,
             aqi: summaryData.aqi,
+            temperature: summaryData.temperature,
+            humidity: summaryData.humidity,
+            windSpeed: summaryData.windSpeed,
             latitude: city.latitude,
             longitude: city.longitude
           };
