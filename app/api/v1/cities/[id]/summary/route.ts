@@ -5,7 +5,7 @@ const BACKEND_API_URL = process.env.BACKEND_API_URL || "https://dummy"
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const response = await fetch(`${BACKEND_API_URL}/cities/${id}`, {
+    const response = await fetch(`${BACKEND_API_URL}/api/v1/cities/${id}/summary`, {
       headers: {
         "Content-Type": "application/json",
       },

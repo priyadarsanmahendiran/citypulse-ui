@@ -20,7 +20,7 @@ export const api = {
 
   async getCityById(cityId: string): Promise<CityData> {
     try {
-      const response = await fetch(`/api/cities/${cityId}`)
+      const response = await fetch(`/api/v1/cities/${cityId}/summary`)
       if (!response.ok) {
         throw new Error(`Failed to fetch city: ${response.statusText}`)
       }

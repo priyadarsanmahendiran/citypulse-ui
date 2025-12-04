@@ -62,7 +62,7 @@ export function MapView({ cities, onCitySelect, selectedCity }: MapViewProps) {
                     cx={x}
                     cy={y}
                     r={isSelected ? 1.5 : 1.2}
-                    fill={getAQIColor(city.aqi)}
+                    fill={getAQIColor(city.aqi ?? -1)}
                     stroke="white"
                     strokeWidth="0.15"
                     opacity={isSelected ? 1 : 0.8}
@@ -74,7 +74,7 @@ export function MapView({ cities, onCitySelect, selectedCity }: MapViewProps) {
                       cy={y}
                       r={2.5}
                       fill="none"
-                      stroke={getAQIColor(city.aqi)}
+                      stroke={getAQIColor(city.aqi ?? -1)}
                       strokeWidth="0.1"
                       opacity="0.5"
                     />
@@ -96,7 +96,7 @@ export function MapView({ cities, onCitySelect, selectedCity }: MapViewProps) {
               }`}
             >
               <div className="flex items-center gap-2 mb-1">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getAQIColor(city.aqi) }} />
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getAQIColor(city.aqi ?? -1) }} />
                 <p className="font-semibold text-sm">{city.name}</p>
               </div>
               <p className="text-xs text-muted-foreground">AQI: {city.aqi}</p>
