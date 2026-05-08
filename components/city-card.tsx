@@ -3,7 +3,7 @@
 import type { CityData } from "@/lib/types"
 import { getPollutionStatus, getAQIColor } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Cloud, Droplets, Wind, Zap, Activity } from "lucide-react"
+import { Cloud, Droplets, Wind, Zap, Activity, ArrowRight } from "lucide-react"
 
 interface CityCardProps {
   city: CityData
@@ -11,20 +11,21 @@ interface CityCardProps {
 }
 
 export function CityCard({ city, onClick }: CityCardProps) {
-  const getMetricTrend = (value: number, threshold: number) => {
-    return value > threshold ? "up" : "down"
+  const formatMetric = (value?: number, suffix = "") => {
+    if (value === undefined) return "N/A"
+    return `${value.toLocaleString()}${suffix}`
   }
 
   return (
     <Card
-      className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:border-accent hover:scale-105 bg-gradient-to-br from-card to-card/50 border-border/50"
+      className="cursor-pointer border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.98),rgba(240,246,255,0.92))] transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-sky-950/10"
       onClick={onClick}
     >
-      <CardHeader className="pb-3 bg-slate-50">
+      <CardHeader className="border-b border-slate-200/80 pb-3">
         <div className="flex items-start justify-between">
           <div>
             <CardTitle className="text-xl text-slate-900">{city.name}</CardTitle>
-            <p className="text-xs text-muted-foreground mt-1">Environmental Status</p>
+            <p className="mt-1 text-xs text-muted-foreground">Environmental snapshot</p>
           </div>
           <div
             className="px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg"
@@ -41,28 +42,28 @@ export function CityCard({ city, onClick }: CityCardProps) {
               <Cloud className="w-4 h-4 text-info" />
               Temperature
             </div>
-            <p className="text-2xl font-bold text-foreground mt-2">{city.temperature}°C</p>
+            <p className="mt-2 text-2xl font-bold text-foreground">{formatMetric(city.temperature, "°C")}</p>
           </div>
           <div className="p-3 rounded-lg bg-success/10 border border-success/20">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Droplets className="w-4 h-4 text-success" />
               Humidity
             </div>
-            <p className="text-2xl font-bold text-foreground mt-2">{city.humidity}%</p>
+            <p className="mt-2 text-2xl font-bold text-foreground">{formatMetric(city.humidity, "%")}</p>
           </div>
           <div className="p-3 rounded-lg bg-warning/10 border border-warning/20">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Wind className="w-4 h-4 text-warning" />
               Wind Speed
             </div>
-            <p className="text-2xl font-bold text-foreground mt-2">{city.windSpeed} m/s</p>
+            <p className="mt-2 text-2xl font-bold text-foreground">{formatMetric(city.windSpeed, " m/s")}</p>
           </div>
           <div className="p-3 rounded-lg bg-error/10 border border-error/20">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Activity className="w-4 h-4 text-error" />
               AQI
             </div>
-            <p className="text-2xl font-bold text-foreground mt-2">{city.aqi}</p>
+            <p className="mt-2 text-2xl font-bold text-foreground">{formatMetric(city.aqi)}</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 border-t border-border pt-4">
@@ -71,19 +72,21 @@ export function CityCard({ city, onClick }: CityCardProps) {
               <Zap className="w-4 h-4 text-accent" />
               Energy
             </div>
-            <p className="text-lg font-semibold text-foreground mt-2">
-              {(city.energyConsumption ?? 0 / 1000)} MWh
-            </p>
+            <p className="mt-2 text-lg font-semibold text-foreground">{formatMetric(city.energyConsumption, " MWh")}</p>
           </div>
           <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Activity className="w-4 h-4 text-primary" />
               Transport
             </div>
-            <p className="text-lg font-semibold text-foreground mt-2">
-              {(city.transportActivity ?? 0 / 1000)}K vehicles
+            <p className="mt-2 text-lg font-semibold text-foreground">
+              {formatMetric(city.transportActivity, "k vehicles")}
             </p>
           </div>
+        </div>
+        <div className="flex items-center justify-between border-t border-slate-200/70 pt-4 text-sm text-slate-600">
+          <span>Open city trends</span>
+          <ArrowRight className="h-4 w-4" />
         </div>
       </CardContent>
     </Card>

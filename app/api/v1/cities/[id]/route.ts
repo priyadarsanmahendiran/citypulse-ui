@@ -5,7 +5,7 @@ import { fetchBackendJson } from "@/lib/server-data"
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const data = await fetchBackendJson(`/api/v1/cities/${encodeURIComponent(id)}/summary`)
+    const data = await fetchBackendJson(`/api/v1/cities/${encodeURIComponent(id)}`)
 
     if (data) {
       return NextResponse.json(data)

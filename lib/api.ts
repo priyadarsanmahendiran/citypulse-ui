@@ -18,9 +18,9 @@ export const api = {
     }
   },
 
-  async getCityById(cityId: string): Promise<CityData> {
+  async getCitySummary(cityId: string): Promise<CityData> {
     try {
-      const response = await fetch(`/api/v1/cities/${cityId}/summary`)
+      const response = await fetch(`/api/v1/cities/${encodeURIComponent(cityId)}/summary`)
       if (!response.ok) {
         throw new Error(`Failed to fetch city: ${response.statusText}`)
       }
@@ -37,7 +37,7 @@ export const api = {
 
   async getTimeSeriesData(cityId: string, timeframe: string = "24h"): Promise<TimeSeriesData[]> {
     try {
-      const response = await fetch(`/api/cities/${cityId}/timeseries?timeframe=${timeframe}`)
+      const response = await fetch(`/api/v1/cities/${encodeURIComponent(cityId)}/timeseries?timeframe=${timeframe}`)
       if (!response.ok) {
         throw new Error(`Failed to fetch time series data: ${response.statusText}`)
       }

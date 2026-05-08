@@ -1,21 +1,16 @@
 import { NextResponse } from "next/server"
-
-const BACKEND_API_URL = process.env.BACKEND_API_URL || "https://dummy"
+import { getMockCities } from "@/lib/mock-data"
+import { fetchBackendJson } from "@/lib/server-data"
 
 export async function GET() {
   try {
-    const response = await fetch(`${BACKEND_API_URL}/api/v1/cities`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    const data = await fetchBackendJson("/api/v1/cities")
 
-    if (!response.ok) {
-      return NextResponse.json({ error: "Failed to fetch cities" }, { status: response.status })
+    if (data) {
+      return NextResponse.json(data)
     }
 
-    const data = await response.json()
-    return NextResponse.json(data)
+    return NextResponse.json(getMockCities())
   } catch (error) {
     console.error("Error fetching cities:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
